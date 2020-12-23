@@ -1,13 +1,14 @@
 import React from 'react';
-import {getWarmup, playExercise} from "./scales";
+import {getWarmup, playExercise} from "./toneUtils";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import './App.css';
 
 const scales = getWarmup([0,2,4,7,4,2,0]);
 const descend = getWarmup([4,3,2,1,0])
+const octaves = getWarmup([0,7,0]);
 
-const exerciseMap = {scales, descend};
+const exerciseMap = {scales, descend, octaves};
 
 class App extends React.Component {
   constructor(props) {
@@ -20,7 +21,8 @@ class App extends React.Component {
   }
 
   handleClickPlay= ()=> {
-    playExercise(this.state.exercise[this.state.index]);
+    const length = this.state.exerciseKey === "octaves"? 1:.5;
+    playExercise(this.state.exercise[this.state.index],length);
   }
 
   handleClickPrev= ()=>{
@@ -58,6 +60,7 @@ class App extends React.Component {
     >
       <MenuItem value={"descend"}>Descend</MenuItem>
       <MenuItem value={"scales"}>Scales</MenuItem>
+      <MenuItem value={"octaves"}>Octaves</MenuItem>
     </Select>
     );
   }

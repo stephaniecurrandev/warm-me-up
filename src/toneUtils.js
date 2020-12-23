@@ -59,24 +59,24 @@ export const getWarmup = (exerciseIndexes)=> {
     return exerciseArrs;
 };
 
-const playArray = (arr,sampler)=> {
+const playArray = (arr,sampler,length)=> {
     let time = Tone.now();
     arr.forEach(note=>{
         // trigger the attack immediately
         sampler.triggerAttack(note, time)
         // wait one second before triggering the release
-        sampler.triggerRelease(time + .5)
-        time+=.5;
+        sampler.triggerRelease(time + length)
+        time+=length;
     });
    // setTimeout(()=> sampler.releaseAll(),5000);
 }
 
-export const playExercise = (arr) => {
+export const playExercise = (arr, length = .5) => {
     console.log(arr);
     const urls = {};
-    arr.forEach((note)=>{
-        urls[note] = encodeURIComponent(`${note}.mp3`);
-    });
+    // arr.forEach((note)=>{
+    //     urls[note] = encodeURIComponent(`${note}.mp3`);
+    // });
     // const sampler = new Tone.Sampler({
     //     urls,
     //     release: .5,
@@ -86,7 +86,7 @@ export const playExercise = (arr) => {
     //     }
     // }).toDestination();
     const synth = new Tone.Synth().toDestination();
-    playArray(arr,synth);
+    playArray(arr,synth, length);
 
 }
 
