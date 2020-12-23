@@ -30,7 +30,8 @@ class App extends React.Component {
   }
 
   handleClickNext= ()=> {
-    const next = this.state.index + 1;
+    let next = this.state.index + 1;
+    if(next >= this.state.exercise.length) next = this.state.exercise.length - 1;
     this.setState({index: next});
   }
   

@@ -51,7 +51,7 @@ export const getWarmup = (exerciseIndexes)=> {
                 exercise.push(octscale[exIn]);
             });
             exerciseArrs.push(exercise);
-            if(scale[0].includes("G")){
+            if(scale[0].includes("B")&& !scale[0].includes("Bb")){
                 majorOctave++;
             }
         })
