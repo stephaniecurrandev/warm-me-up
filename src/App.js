@@ -16,13 +16,26 @@ class App extends React.Component {
     this.state = {
       index: 0,
       exerciseKey: "descend",
-      exercise: descend
+      exercise: descend,
+      playTransition: false,
+      autoPlay: false
     };
   }
 
   handleClickPlay= ()=> {
     const length = this.state.exerciseKey === "octaves"? 1:.5;
-    playExercise(this.state.exercise[this.state.index],length);
+    let toPlayEx = this.state.exercise[this.state.index];
+    if(this.state.playTransition && this.state.index+1 < this.state.exercise.length) {
+      const twoNotes = [
+        this.state.exercise[this.state.index][0],
+        this.state.exercise[this.state.index+1][0],
+      ]
+      toPlayEx = toPlayEx.concat(twoNotes);
+    }
+    playExercise(toPlayEx,length);
+    if(this.state.autoPlay) {
+      setTimeout(()=> this.handleClickNext(this.handleClickPlay),5000);
+    }
   }
 
   handleClickPrev= ()=>{
@@ -32,9 +45,10 @@ class App extends React.Component {
   }
 
   handleClickNext= ()=> {
+    const callback = this.state.autoPlay ? this.handleClickPlay : null;
     let next = this.state.index + 1;
     if(next >= this.state.exercise.length) next = this.state.exercise.length - 1;
-    this.setState({index: next});
+    this.setState({index: next}, callback);
   }
   
   handleClickFirstNote= ()=> {
@@ -48,6 +62,20 @@ class App extends React.Component {
       exercise: exerciseMap[exerciseKey],
       index: 0
     })
+  }
+
+  handleAutoplayCheckChange = (e) => {
+    const status = e.target.checked;
+    this.setState({
+      autoPlay: status
+    });
+  }
+
+  handleTransitionCheckChange = (e) => {
+    const status = e.target.checked;
+    this.setState({
+      playTransition: status
+    });
   }
 
   renderSelect=(exerciseKey)=>{
@@ -75,6 +103,18 @@ class App extends React.Component {
         <button onClick={this.handleClickPlay.bind(this)}>Play</button>
         <button onClick={this.handleClickFirstNote.bind(this)}>First Note</button>
         <button onClick={this.handleClickNext.bind(this)}>Next</button>
+        <div>
+          <input type="checkbox" 
+          checked={this.state.autoPlay} 
+          onClick={this.handleAutoplayCheckChange.bind(this)}/>
+          {" Autoplay"}
+        </div>
+        <div>
+          <input type="checkbox" 
+          checked={this.state.playTransition} 
+          onClick={this.handleTransitionCheckChange.bind(this)}/>
+          {" Play Transition"}
+        </div>
       </div>
     );
   }
