@@ -33,7 +33,7 @@ export const getWarmup = (exerciseIndexes)=> {
     
     const exerciseArrs = [];
 
-    let majorOctave = 4;
+    let majorOctave = 3;
     while(majorOctave < 7) {
         splitNotes.forEach(scale=>{
             let octscale = [];

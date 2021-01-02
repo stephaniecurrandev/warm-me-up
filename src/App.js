@@ -1,8 +1,11 @@
 import React from 'react';
+import _ from 'lodash';
 import {getWarmup, playExercise} from "./toneUtils";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import './App.css';
+
+const DEFAULT_STARTER_KEY = 6;
 
 const scales = getWarmup([0,2,4,7,4,2,0]);
 const descend = getWarmup([4,3,2,1,0])
@@ -14,16 +17,17 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      index: 0,
+      index: DEFAULT_STARTER_KEY,
       exerciseKey: "descend",
       exercise: descend,
       playTransition: false,
-      autoPlay: false
+      autoPlay: false,
+      noAccidentals: false
     };
   }
 
   handleClickPlay= ()=> {
-    const length = this.state.exerciseKey === "octaves"? 1:.5;
+    const length = this.state.exerciseKey === "octaves"? 1.5 : .5;
     let toPlayEx = this.state.exercise[this.state.index];
     if(this.state.playTransition && this.state.index+1 < this.state.exercise.length) {
       const twoNotes = [
@@ -45,9 +49,16 @@ class App extends React.Component {
   }
 
   handleClickNext= ()=> {
-    const callback = this.state.autoPlay ? this.handleClickPlay : null;
     let next = this.state.index + 1;
+    let potentialKey = _.last(this.state.exercise[next],"");
+    const isHalfStep = _.includes(potentialKey,"b") ||_.includes(potentialKey,"#") ;
+    const callback = this.state.noAccidentals && isHalfStep? 
+                     this.handleClickNext : 
+                     this.state.autoPlay ? 
+                     this.handleClickPlay : null;
+    
     if(next >= this.state.exercise.length) next = this.state.exercise.length - 1;
+
     this.setState({index: next}, callback);
   }
   
@@ -60,7 +71,7 @@ class App extends React.Component {
     this.setState({
       exerciseKey,
       exercise: exerciseMap[exerciseKey],
-      index: 0
+      index: DEFAULT_STARTER_KEY
     })
   }
 
@@ -75,6 +86,13 @@ class App extends React.Component {
     const status = e.target.checked;
     this.setState({
       playTransition: status
+    });
+  }
+
+  handleAccidentalCheckChange = (e) => {
+    const status = e.target.checked;
+    this.setState({
+      noAccidentals: status
     });
   }
 
@@ -114,6 +132,12 @@ class App extends React.Component {
           checked={this.state.playTransition} 
           onClick={this.handleTransitionCheckChange.bind(this)}/>
           {" Play Transition"}
+        </div>
+        <div>
+          <input type="checkbox" 
+          checked={this.state.noAccidentals} 
+          onClick={this.handleAccidentalCheckChange.bind(this)}/>
+          {" No accidentals on the way up"}
         </div>
       </div>
     );
